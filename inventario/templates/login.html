@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Ingresar{% endblock %}
+{% block content %}
+
+<div class="flex justify-center items-center min-h-[70vh]">
+  <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
+    <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">🔐 Ingresar al sistema</h1>
+
+```
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  <div class="space-y-2">
+    {{ form.as_p }}
+  </div>
+
+  <button type="submit"
+    class="w-full py-2.5 bg-panaderia hover:bg-yellow-500 text-white font-semibold rounded-xl shadow-sm transition">
+    Entrar
+  </button>
+</form>
+
+<p class="text-center text-sm text-gray-500 mt-6">
+  ¿Olvidaste tu contraseña? <a href="#" class="text-panaderia hover:underline">Recupérala aquí</a>.
+</p>
+```
+
+  </div>
+</div>
+
+{% endblock %}

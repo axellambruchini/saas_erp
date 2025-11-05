@@ -1,0 +1,150 @@
+{% load static %}
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Intranet{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            panaderia: '#fbbf24', // Amarillo cálido
+          },
+        },
+      },
+    }
+  </script>
+
+  <script>
+    function setFontSize(size) {
+      document.documentElement.style.fontSize = size + '%';
+      localStorage.setItem('fontSize', size);
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('fontSize') || 100;
+      document.documentElement.style.fontSize = saved + '%';
+    });
+  </script>
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+      
+      <a href="{% url 'inventario:panel' %}" class="text-xl font-bold text-panaderia">🥐 FERRYX </a>
+
+      {% if user.is_authenticated %}
+      <nav class="hidden md:flex flex-wrap gap-3">
+        
+        <a href="{% url 'inventario:panel' %}" class="hover:text-panaderia">Panel</a>
+        
+        {% if perms.inventario.view_materiaprima %}
+          <a href="{% url 'inventario:mp_list' %}" class="hover:text-panaderia">Materias primas</a>
+        {% endif %}
+        {% if perms.inventario.view_movimientomp %}
+          <a href="{% url 'inventario:kardex' %}" class="hover:text-panaderia">Kardex</a>
+        {% endif %}
+        
+        {% if perms.inventario.view_ordenproduccion %}
+          <a href="{% url 'inventario:op_list' %}" class="hover:text-panaderia">Producción</a>
+        {% endif %}
+        
+        {% if perms.inventario.view_loteproducto %}
+          <a href="{% url 'inventario:lote_list' %}" class="hover:text-panaderia">Lotes</a>
+        {% endif %}
+        
+        {% if perms.inventario.view_venta %}
+          <a href="{% url 'inventario:venta_list' %}" class="hover:text-panaderia">Ventas</a>
+        {% endif %}
+        
+        {% if perms.inventario.can_run_predictions %}
+          <a href="{% url 'inventario:predict' %}" class="hover:text-panaderia">IA Predictiva</a>
+        {% endif %}
+
+      </nav>
+      {% endif %}
+
+      <div class="md:hidden">
+        <button id="menu-btn" class="text-panaderia focus:outline-none">
+          ☰
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3 ml-4">
+        {% if user.is_authenticated %}
+          <span class="text-sm text-gray-700">{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="bg-panaderia text-white px-3 py-1 rounded-md hover:bg-yellow-500">
+              Salir
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="bg-panaderia text-white px-3 py-1 rounded-md hover:bg-yellow-500">Entrar</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4">
+      
+      <a href="{% url 'inventario:panel' %}" class="block py-1 hover:text-panaderia">Panel</a>
+      
+      {% if perms.inventario.view_materiaprima %}
+        <a href="{% url 'inventario:mp_list' %}" class="block py-1 hover:text-panaderia">Materias primas</a>
+      {% endif %}
+      {% if perms.inventario.view_movimientomp %}
+        <a href="{% url 'inventario:kardex' %}" class="block py-1 hover:text-panaderia">Kardex</a>
+      {% endif %}
+      
+      {% if perms.inventario.view_ordenproduccion %}
+        <a href="{% url 'inventario:op_list' %}" class="block py-1 hover:text-panaderia">Producción</a>
+      {% endif %}
+
+      {% if perms.inventario.view_loteproducto %}
+        <a href="{% url 'inventario:lote_list' %}" class="block py-1 hover:text-panaderia">Lotes</a>
+      {% endif %}
+
+      {% if perms.inventario.view_venta %}
+        <a href="{% url 'inventario:venta_list' %}" class="block py-1 hover:text-panaderia">Ventas</a>
+      {% endif %}
+
+      {% if perms.inventario.can_run_predictions %}
+        <a href="{% url 'inventario:predict' %}" class="block py-1 hover:text-panaderia">IA Predictiva</a>
+      {% endif %}
+    
+    </div>
+    {% endif %}
+
+    <div class="bg-gray-50 border-t text-center py-2">
+      <span class="text-sm text-gray-600 mr-2">Tamaño de fuente:</span>
+      <button onclick="setFontSize(90)" class="px-2 py-1 text-sm border rounded hover:bg-gray-200">A-</button>
+      <button onclick="setFontSize(100)" class="px-2 py-1 text-sm border rounded hover:bg-gray-200">A</button>
+      <button onclick="setFontSize(120)" class="px-2 py-1 text-sm border rounded hover:bg-gray-200">A+</button>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer class="bg-white border-t text-center py-3 mt-6 text-sm text-gray-600">
+    © {% now "Y" %} Panadería - Sistema de Gestión ERP
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>
