@@ -1,0 +1,17 @@
+django
+pandas
+openpyxl
+prophet
+azure-ai-formrecognizer
+thefuzz
+qrcode
+python-barcode
+Pillow
+qrcode
+barcode
+setuptools
+pip install python-barcode[images]
+prophet
+azure
+pip install azure-ai-formrecognizer
+pip install thefuzz
