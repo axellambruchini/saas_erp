@@ -9,5 +9,4 @@ barcode
 setuptools
 python-barcode[images]
 prophet
-azure
 thefuzz
