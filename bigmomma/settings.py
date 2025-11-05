@@ -1,12 +1,16 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Cargar variables de entorno desde .env en desarrollo (no subir .env al repo)
+load_dotenv(BASE_DIR / ".env")
+
 # === Seguridad ===
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key")
-DEBUG = True  # ⚠️ cámbialo a False en producción
-ALLOWED_HOSTS = ["*"]  # en producción usa tu dominio/IP
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"  # ⚠️ cámbialo a False en producción
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")  # en producción usa tu dominio/IP
 
 # === Apps instaladas ===
 INSTALLED_APPS = [
@@ -24,7 +28,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware,
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -98,12 +102,21 @@ LOGOUT_REDIRECT_URL = 'inventario:index'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Configuración existente de Azure Form Recognizer (leer desde env)
+AZURE_DOCINT_ENDPOINT = os.environ.get("AZURE_DOCINT_ENDPOINT", "https://recetafactura.cognitiveservices.azure.com/")
+AZURE_DOCINT_KEY = os.environ.get("AZURE_DOCINT_KEY", "")
 
-AZURE_DOCINT_ENDPOINT = "https://recetafactura.cognitiveservices.azure.com/"
+# === Configuración para OpenAI / Azure OpenAI ===
+# Modo: "openai" o "azure" (por defecto "openai")
+OPENAI_PROVIDER = os.environ.get("OPENAI_PROVIDER", "openai").lower()
 
-# Pega aquí tu "Clave 1"
-AZURE_DOCINT_KEY = "whxLFWoGjkPWKEUc96PuE7N09xkTzyGM0pwVa0VvHkZc3cFUw9hCJQQJ99BJACZoyfiXJ3w3AAALACOG0GxE"
+# Para OpenAI oficial:
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
+# Para Azure OpenAI:
+AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
+AZURE_OPENAI_KEY = os.environ.get("AZURE_OPENAI_KEY", "")
+AZURE_OPENAI_DEPLOYMENT = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "")  # nombre del deployment/engine
 
 # BORRA ESTA LÍNEA de settings.py
 AUTH_USER_MODEL = 'inventario.User'
