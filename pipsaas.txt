@@ -1,0 +1,13 @@
+django
+pandas
+openpyxl
+azure-ai-formrecognizer
+qrcode
+python-barcode
+Pillow
+barcode
+setuptools
+python-barcode[images]
+prophet
+azure
+thefuzz
